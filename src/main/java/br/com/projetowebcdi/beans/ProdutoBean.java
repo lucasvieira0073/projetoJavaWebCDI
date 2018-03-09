@@ -32,7 +32,10 @@ public class ProdutoBean implements Serializable {
 	private Produto produto = new Produto();
 
 	@Inject
-	private ProdutoDao produtoDao;;
+	private ProdutoDao produtoDao;
+	
+	@Inject
+	FacesContext context;
 
 	public ProdutoBean() {
 
@@ -46,9 +49,8 @@ public class ProdutoBean implements Serializable {
 		if (produto.getId() == null) {
 			this.produtoDao.persist(produto);
 
-			FacesContext context = FacesContext.getCurrentInstance();
-			context.getExternalContext().getFlash().setKeepMessages(true);
-			context.addMessage(null, new FacesMessage("Produto cadastrado com sucesso!"));
+			this.context.getExternalContext().getFlash().setKeepMessages(true);
+			this.context.addMessage(null, new FacesMessage("Produto cadastrado com sucesso!"));
 		}
 		return "home?faces-redirect=true";
 	}
