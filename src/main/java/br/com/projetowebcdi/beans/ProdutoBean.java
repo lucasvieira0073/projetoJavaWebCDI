@@ -4,16 +4,25 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import br.com.projetowebcdi.daos.ProdutoDao;
 import br.com.projetowebcdi.models.Produto;
+import br.com.projetowebcdi.tx.Transacional;
 
-@ManagedBean
-@RequestScoped
+/**
+ * usados sem cdi
+ * @ManagedBean
+ * @RequestScoped
+ *
+ */
+
+@Named
+@RequestScoped//enterprise context RequestScoped
 public class ProdutoBean implements Serializable {
 	
 	private static final long serialVersionUID = 6543839311388129620L;
@@ -22,18 +31,20 @@ public class ProdutoBean implements Serializable {
 
 	private Produto produto = new Produto();
 
-	private ProdutoDao produtoDao = new ProdutoDao();
+	@Inject
+	private ProdutoDao produtoDao;;
 
 	public ProdutoBean() {
 
 		System.out.println("Nova instancia");
 	}
 
+	@Transacional
 	public String salvar() {
-		System.out.println("REALIZANDO A FUN��O DE SALVAR");
+		System.out.println("REALIZANDO A FUNCAO DE SALVAR");
 
 		if (produto.getId() == null) {
-			produtoDao.persist(produto);
+			this.produtoDao.persist(produto);
 
 			FacesContext context = FacesContext.getCurrentInstance();
 			context.getExternalContext().getFlash().setKeepMessages(true);
@@ -43,15 +54,15 @@ public class ProdutoBean implements Serializable {
 	}
 	
 	public List<Produto> listar() {
-		return produtoDao.findAll();
+		return this.produtoDao.findAll();
 	}
 	
 	public int contarProdutos() {
-		return produtoDao.count();
+		return this.produtoDao.count();
 	}
 
 	public Produto pesquisarProduto(Integer id) {
-		return produtoDao.finById(id);
+		return this.produtoDao.finById(id);
 	}
 	
 	public List<Produto> getProdutos() {
